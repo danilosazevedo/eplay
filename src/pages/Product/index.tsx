@@ -5,41 +5,47 @@ import Section from '../../components/Section'
 import Gallery from '../../components/Gallery'
 
 import resident from '../../assets/imgs/resident.png'
+import { useEffect, useState } from 'react'
+import { Game } from '../Home'
 
 const Product = () => {
   const { id } = useParams()
+
+  const [game, setGame] = useState<Game>()
+
+  useEffect(() => {
+    fetch(`https://fake-api-tau.vercel.app/api/eplay/jogos/${id}`)
+      .then((res) => res.json())
+      .then((res) => setGame(res))
+  }, [id])
+
+  if (!game) {
+    return <h3>...carregando</h3>
+  }
+
   return (
     <>
-      <Hero />
+      <Hero game={game} />
       <Section title="Sobre o Jogo" background="black">
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore
-          accusamus quasi eum ea fuga. Cumque esse fugit corporis consectetur
-          deleniti veniam velit non rem ullam tempore. Laborum cupiditate nobis
-          beatae. Lorem ipsum dolor sit, amet consectetur adipisicing elit. A
-          pariatur, tempora suscipit ab hic amet dolore? Vitae voluptate et ad
-          dolore cumque, facilis illo sint pariatur similique perferendis
-          consectetur quia! Lorem ipsum dolor, sit amet consectetur adipisicing
-          elit. Rem ea doloremque eum deleniti soluta nemo, accusamus
-          accusantium officia quisquam sapiente consectetur qui a perferendis
-          laudantium excepturi quo? Ratione, fugiat unde?
-        </p>
+        <p>{game.description}</p>
       </Section>
       <Section title="Mais Detalhes" background="gray">
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore
-          accusamus quasi eum ea fuga. Cumque esse fugit corporis consectetur
-          deleniti veniam velit non rem ullam tempore. Laborum cupiditate nobis
-          beatae. Lorem ipsum dolor sit, amet consectetur adipisicing elit. A
-          pariatur, tempora suscipit ab hic amet dolore? Vitae voluptate et ad
-          dolore cumque, facilis illo sint pariatur similique perferendis
-          consectetur quia! Lorem ipsum dolor, sit amet consectetur adipisicing
-          elit. Rem ea doloremque eum deleniti soluta nemo, accusamus
-          accusantium officia quisquam sapiente consectetur qui a perferendis
-          laudantium excepturi quo? Ratione, fugiat unde?
+          <b>Plataforma:</b> {game.details.system} <br />
+          <b>Desenvolvedor:</b>
+          {game.details.developer}
+          <br />
+          <b>Editora:</b>
+          {game.details.publisher}
+          <br />
+          <b>Idiomas:</b> {game.details.languages.join(', ')}
         </p>
       </Section>
-      <Gallery name="Nome do Jogo" defaultCover={resident} />
+      <Gallery
+        name={game.name}
+        defaultCover={game.media.cover}
+        items={game.media.gallery}
+      />
     </>
   )
 }

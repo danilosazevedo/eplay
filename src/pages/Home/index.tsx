@@ -1,104 +1,61 @@
 import ProductList from '../../components/ProductList'
 import Banner from '../../components/Banner'
-import Game from '../../models/Games'
 
 import resident from '../../assets/imgs/resident.png'
 import diablo from '../../assets/imgs/diablo.png'
 import zelda from '../../assets/imgs/zelda.png'
 import starWars from '../../assets/imgs/star_wars.png'
+import { useEffect, useState } from 'react'
 
-const promocoes: Game[] = [
-  {
-    id: 1,
-    category: 'Ação',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Resident Evil 4',
-    system: 'Windows',
-    infos: ['10%', 'R$ 250,00'],
-    image: resident
-  },
-  {
-    id: 2,
-    category: 'Ação',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Resident Evil 4',
-    system: 'Windows',
-    infos: ['10%', 'R$ 200,00'],
-    image: resident
-  },
-  {
-    id: 3,
-    category: 'Ação',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Resident Evil 4',
-    system: 'Windows',
-    infos: ['10%', 'R$ 180,00'],
-    image: resident
-  },
-  {
-    id: 4,
-    category: 'Ação',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Resident Evil 4',
-    system: 'Windows',
-    infos: ['10%', 'R$ 300,00'],
-    image: resident
+export interface GalleryItem {
+  type: 'image' | 'video'
+  url: string
+}
+
+export type Game = {
+  id: number
+  name: string
+  description: string
+  release_date?: string
+  prices: {
+    discount?: number
+    old?: number
+    current?: number
   }
-]
-
-const emBreve: Game[] = [
-  {
-    id: 5,
-    category: 'RPG',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Diablo',
-    system: 'Windows',
-    infos: ['17/05'],
-    image: diablo
-  },
-  {
-    id: 6,
-    category: 'RPG',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Zelda',
-    system: 'Windows',
-    infos: ['17/05'],
-    image: zelda
-  },
-  {
-    id: 7,
-    category: 'RPG',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'StarWars',
-    system: 'Windows',
-    infos: ['17/05'],
-    image: starWars
-  },
-  {
-    id: 8,
-    category: 'RPG',
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horro...',
-    title: 'Diablo',
-    system: 'Windows',
-    infos: ['17/05'],
-    image: diablo
+  details: {
+    category: string
+    system: string
+    developer: string
+    publisher: string
+    languages: string[]
   }
-]
+  media: {
+    thumbnail: string
+    cover: string
+    gallery: GalleryItem[]
+  }
+}
 
-const Home = () => (
-  <>
-    <Banner />
-    <ProductList games={promocoes} title="Promoções" background="gray" />
-    <ProductList games={emBreve} title="Em Breve" background="black" />
-  </>
-)
+const Home = () => {
+  const [promocoes, setPromocoes] = useState<Game[]>([])
+  const [emBreve, setEmBreve] = useState<Game[]>([])
+
+  useEffect(() => {
+    fetch('https://fake-api-tau.vercel.app/api/eplay/promocoes')
+      .then((res) => res.json())
+      .then((res) => setPromocoes(res))
+
+    fetch('https://fake-api-tau.vercel.app/api/eplay/em-breve')
+      .then((res) => res.json())
+      .then((res) => setEmBreve(res))
+  }, [])
+  return (
+    <>
+      <Banner />
+      <ProductList games={promocoes} title="Promoções" background="gray" />
+      <ProductList games={emBreve} title="Em Breve" background="black" />
+    </>
+  )
+}
 
 export default Home
